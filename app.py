@@ -21,10 +21,7 @@ app = Flask(__name__)
 
 # Model saved with Keras model.save()
 MODEL_PATH = 'models/model_resnet.h5'
-
-# Load your trained model
-model = load_model(MODEL_PATH)
-model._make_predict_function()
+print(" MODEL_PATH :",MODEL_PATH)
 
 
 def model_predict(img_path, model):
@@ -61,16 +58,21 @@ def upload():
             basepath, 'uploads', secure_filename(f.filename))
         f.save(file_path)
 
+        # Load your trained model
+        model = load_model(MODEL_PATH)
+        print("*** Model Loaded ***")
+        model._make_predict_function()
+
         # Make prediction
         preds = model_predict(file_path, model)
-        print('******************************************')
+        print('*** preds ***')
 
         # Process your result for human
         # pred_class = preds.argmax(axis=-1)            # Simple argmax
         pred_class = decode_predictions(preds, top=1)   # ImageNet Decode
-        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        print('*** pred class ***')
         result = str(pred_class[0][0][1])               # Convert to string
-        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        print('*** result ***')
         return result
     elif request.method == 'GET':
         return render_template('index.html')
@@ -78,5 +80,6 @@ def upload():
 
 
 if __name__ == '__main__':
+    print('*** App Started ***')
     app.run(debug=True)
 
